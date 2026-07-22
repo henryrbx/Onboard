@@ -108,6 +108,7 @@ sequence:Stop()
 
 Customize default behavior and appearance directly in `ReplicatedStorage/OnBoard/Config.lua`:
 
+---
 local Config = {
     Theme = {
         Font = Font.fromEnum(Enum.Font.BuilderSans),
