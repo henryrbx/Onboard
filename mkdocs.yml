@@ -11,14 +11,26 @@ theme:
   palette:
     scheme: slate
     primary: indigo
-    accent: black
+    accent: grey
   features:
     - navigation.expand
     - content.code.copy
     - search.suggest
 
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
   - API Reference: api.md
   - Configuration: config.md

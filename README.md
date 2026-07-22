@@ -1,7 +1,4 @@
-# 🚀 OnBoard Framework
-
-**OnBoard** is a lightweight, modern onboarding and tutorial framework for Roblox. It provides simple step-by-step tutorial sequences, automatic screen overlay highlights, adaptive 2D UI point arrows, and 3D world guide beams.
-
+a lightweight Roblox framework for creating tutorial sequences with screen overlays, 2D UI arrows, and 3D world guide beams.
 ---
 
 ## 📌 Features
@@ -17,7 +14,7 @@
 
 * Get the `OnBoard` Package from `Creator Store`.
 * Copy the whole `Src/` from github.
-
+* Read the Docs [Here](https://henryrbx.github.io/Onboard/)
 
 ## 📜 License & Terms of Use
 

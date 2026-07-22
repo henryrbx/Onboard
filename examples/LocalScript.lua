@@ -1,14 +1,10 @@
-## 🚀 Quick Start Guide
+--Basic Setup in a LocalScript
+--Create a `LocalScript` inside `StarterPlayerScripts` or `StarterGui`:
 
-### Basic Setup in a LocalScript
-
-Create a `LocalScript` inside `StarterPlayerScripts` or `StarterGui`:
-
-```luau
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local OnBoard = require(ReplicatedStorage:WaitForChild("OnBoard"))
+local OnBoard = require(ReplicatedStorage.OnBoard) -- Assuming OnBoard is in ReplicatedStorage
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -36,4 +32,3 @@ local sequence = OnBoard.CreateSequence({
 
 -- Start the tutorial sequence!
 sequence:Start()
-```

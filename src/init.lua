@@ -7,7 +7,7 @@
 	
 	@creator: @Henrycooper9
 	@version 1.0.0
-	@see https://github.com/your-username/onboard-docs -- API Documentation Guide
+	@see https://henryrbx.github.io/Onboard/ -- API Documentation Guide
 	
 	--------------------------------------------------------------------------------
 	LICENSE / TERMS OF USE:
