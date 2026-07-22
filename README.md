@@ -31,12 +31,16 @@ ReplicatedStorage
 
 ## 🚀 Quick Start Guide
 
-### 1. Basic Setup in a LocalScript
+### Basic Setup in a LocalScript
 
 Create a `LocalScript` inside `StarterPlayerScripts` or `StarterGui`:
 
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local OnBoard = require(ReplicatedStorage:WaitForChild("OnBoard"))
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
 -- Create a new sequence
 local sequence = OnBoard.CreateSequence({
@@ -108,7 +112,6 @@ sequence:Stop()
 
 Customize default behavior and appearance directly in `ReplicatedStorage/OnBoard/Config.lua`:
 
----
 local Config = {
     Theme = {
         Font = Font.fromEnum(Enum.Font.BuilderSans),
@@ -116,9 +119,8 @@ local Config = {
         DescriptionSize = 16,
         TextColor = Color3.fromRGB(255, 255, 255),
         
-         Custom 3D Arrow Texture
+        -- Custom 3D Arrow Texture
         ArrowBeamTexture = "rbxassetid://98078426234204",
-        
     },
 
     UIScreenGuiName = "OnBoard_CoreGui",
