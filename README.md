@@ -144,4 +144,4 @@ return Config
 * **Author**: @Henrycooper9
 * **Version**: `1.0.0`
 
-> **Note**: This is an open-source testing/learning framework. You are free to modify and improve it for your own games. **Resale or paid redistribution of this module is strictly prohibited.**<
+> **Note**: This is an open-source testing/learning framework. You are free to modify and improve it for your own games. **Resale or paid redistribution of this module is strictly prohibited.**
