@@ -6,9 +6,10 @@ This document provides a comprehensive overview of the public classes, methods, 
 
 ## 🛠️ OnBoard (Core Engine)
 
-The entry point for creating tutorial sequences and managing global configs.
+### `CreateSequence`
 
-### `OnBoard.CreateSequence(config: SequenceConfig): Sequence`
+```luau
+OnBoard.CreateSequence(config: SequenceConfig): Sequence
 Constructs and returns a new `Sequence` controller instance.
 
 * **`config`** (`SequenceConfig`): Configuration table defining sequence ID and steps.
