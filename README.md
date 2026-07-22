@@ -18,6 +18,7 @@
 1. Place the `OnBoard` folder into `ReplicatedStorage`.
 2. Ensure your module structure looks like this:
 
+```text
 ReplicatedStorage
 └── OnBoard
     ├── init.lua
@@ -26,6 +27,7 @@ ReplicatedStorage
     ├── Theme.lua
     ├── Arrow.lua
     └── Card.lua
+```
 
 ---
 
@@ -35,6 +37,7 @@ ReplicatedStorage
 
 Create a `LocalScript` inside `StarterPlayerScripts` or `StarterGui`:
 
+```luau
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -66,6 +69,7 @@ local sequence = OnBoard.CreateSequence({
 
 -- Start the tutorial sequence!
 sequence:Start()
+```
 
 ---
 
@@ -94,6 +98,7 @@ Constructs a new tutorial sequence.
 
 ### `Sequence` Methods
 
+```luau
 -- Start the sequence from step 1
 sequence:Start()
 
@@ -105,6 +110,7 @@ sequence:Previous()
 
 -- End and cleanup the tutorial sequence
 sequence:Stop()
+```
 
 ---
 
@@ -112,6 +118,7 @@ sequence:Stop()
 
 Customize default behavior and appearance directly in `ReplicatedStorage/OnBoard/Config.lua`:
 
+```luau
 local Config = {
     Theme = {
         Font = Font.fromEnum(Enum.Font.BuilderSans),
@@ -128,6 +135,7 @@ local Config = {
 }
 
 return Config
+```
 
 ---
 
