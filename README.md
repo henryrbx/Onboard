@@ -115,7 +115,7 @@ local Config = {
         DescriptionSize = 16,
         TextColor = Color3.fromRGB(255, 255, 255),
         
-        -- Custom 3D Arrow Texture
+         Custom 3D Arrow Texture
         ArrowBeamTexture = "rbxassetid://98078426234204",
         
     },
