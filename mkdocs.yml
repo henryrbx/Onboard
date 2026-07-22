@@ -1,0 +1,24 @@
+site_name: OnBoard Docs
+site_description: Documentation for OnBoard Framework
+site_author: Henrycooper9
+site_url: https://henrycooper9.github.io/Onboard/
+
+repo_name: henrycooper9/Onboard
+repo_url: https://github.com/henrycooper9/Onboard
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: indigo
+    accent: blue
+  features:
+    - navigation.expand
+    - content.code.copy
+    - search.suggest
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - API Reference: api.md
+  - Configuration: config.md
