@@ -1,5 +1,5 @@
-local Types = require(script.Parent.Types)
-local Config = require(script.Parent.Config)
+local Types = require(script.Parent.Parent.Types)
+local Config = require(script.Parent.Parent.Modules.Config)
 
 --[=[
 	@class Theme

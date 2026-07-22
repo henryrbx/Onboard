@@ -1,11 +1,13 @@
-local Types = require(script.Parent.Types)
-local Config = require(script.Parent.Config)
-local Theme = require(script.Parent.Theme)
-local Highlight = require(script.Parent.Highlight)
-local Overlay = require(script.Parent.Overlay)
-local Arrow = require(script.Parent.Arrow)
-local Card = require(script.Parent.Card)
-local Utils = require(script.Parent.Utils)
+local Modules = script.Parent
+local Elements = script.Parent.Parent.Elements
+local Types = require(script.Parent.Parent.Types)
+local Config = require(Modules.Config)
+local Theme = require(Modules.Theme)
+local Highlight = require(Elements.Highlight)
+local Overlay = require(Elements.Overlay)
+local Arrow = require(Elements.Arrow)
+local Card = require(Elements.Card)
+local Utils = require(script.Parent.Parent.Utils)
 
 local Tutorial = {}
 Tutorial.__index = Tutorial
@@ -138,4 +140,5 @@ function Tutorial:Stop()
 	self:_clearStepVisuals()
 	self.Completed:Fire()
 end
+
 return Tutorial

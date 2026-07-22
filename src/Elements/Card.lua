@@ -1,8 +1,10 @@
 local Players = game:GetService("Players")
 
-local Types = require(script.Parent.Types)
-local Config = require(script.Parent.Config)
-local Theme = require(script.Parent.Theme)
+local Modules = script.Parent.Parent.Modules
+local Elements = script.Parent.Parent.Elements
+local Types = require(Elements.Parent.Types)
+local Config = require(Modules.Config)
+local Theme = require(Modules.Theme)
 
 local Card = {}
 Card.__index = Card

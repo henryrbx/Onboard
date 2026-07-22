@@ -1,10 +1,11 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
-local Types = require(script.Parent.Types)
-local Config = require(script.Parent.Config)
-local Theme = require(script.Parent.Theme)
-local Utils = require(script.Parent.Utils)
+local Modules = script.Parent.Parent.Modules
+local Types = require(script.Parent.Parent.Types)
+local Config = require(Modules.Config)
+local Theme = require(Modules.Theme)
+local Utils = require(script.Parent.Parent.Utils)
 
 local Arrow = {}
 Arrow.__index = Arrow
@@ -197,4 +198,5 @@ function Arrow:Destroy()
 		self._beamAttachment1 = nil
 	end
 end
+
 return Arrow

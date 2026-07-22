@@ -1,10 +1,12 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
-local Types = require(script.Parent.Types)
-local Config = require(script.Parent.Config)
-local Theme = require(script.Parent.Theme)
-local Utils = require(script.Parent.Utils)
+local Modules = script.Parent.Parent.Modules
+local Elements = script.Parent.Parent.Elements
+local Types = require(script.Parent.Parent.Types)
+local Config = require(Modules.Config)
+local Theme = require(Modules.Theme)
+local Utils = require(script.Parent.Parent.Utils)
 
 local Highlight = {}
 Highlight.__index = Highlight
@@ -97,4 +99,5 @@ function Highlight:Destroy()
 		self._worldHighlight = nil
 	end
 end
+
 return Highlight

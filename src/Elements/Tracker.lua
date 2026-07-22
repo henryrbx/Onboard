@@ -2,7 +2,7 @@
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
-local Types = require(script.Parent.Types)
+local Types = require(script.Parent.Parent.Types)
 
 local Tracker = {}
 

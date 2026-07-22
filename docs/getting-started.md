@@ -6,7 +6,7 @@ This guide will walk you through installing OnBoard and creating your first tuto
 
 ## Installation
 
-1. Copy the files inside `src/` to a folder named `OnBoard` in `ReplicatedStorage` (or get the package from the **Creator Store**).
+1. Copy the files inside `src/` to a folder named `OnBoard` in `ReplicatedStorage` (or get the package from the [**Creator Store**]()).
 2. Ensure your hierarchy matches the layout below:
 
 ```text
@@ -23,6 +23,6 @@ ReplicatedStorage
     ├── Tutorial.lua
     ├── Types.lua
     └── Util.lua
-    :::note
-This is the default structure of the package. You can relocate files as needed, but modifying core module paths without updating imports may break scripts.
-:::
+```
+
+> **Note**:This is the default structure of the package. You can relocate files if needed, but modifying core module paths without updating imports may break scripts.**
