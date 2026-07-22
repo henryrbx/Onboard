@@ -21,12 +21,18 @@
 ```text
 ReplicatedStorage
 └── OnBoard
-    ├── init.lua
-    ├── Config.lua
-    ├── Types.lua
-    ├── Theme.lua
     ├── Arrow.lua
-    └── Card.lua
+    ├── Card.lua
+    ├── Config.lua
+    ├── Highlight.lua
+    ├── Init.lua
+    ├── Overlay.lua
+    ├── Theme.lua
+    ├── Tracker.lua
+    ├── Tutorial.lua
+    ├── Types.lua
+    └── Util.lua
+    
 ```
 
 ---
