@@ -1,6 +1,5 @@
 a lightweight Roblox framework for creating tutorial sequences with screen overlays, 2D UI arrows, and 3D world guide beams.
 ---
----
 
 ## 🛠️ Installation
 
