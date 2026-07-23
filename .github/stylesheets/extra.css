@@ -1,0 +1,9 @@
+[data-md-color-scheme="slate"] {
+  /* Header background color (Dark Slate / Charcoal) */
+  --md-primary-fg-color:        #1e1e24;
+  --md-primary-fg-color--light: #2b2b36;
+  --md-primary-fg-color--dark:  #121216;
+
+  /* Accent highlights (Pure White) */
+  --md-accent-fg-color:         #ffffff;
+}

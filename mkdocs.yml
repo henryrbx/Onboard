@@ -29,6 +29,9 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
 
+extra_css:
+  - stylesheets/extra.css
+
 nav:
   - Home: index.md
   - Configuration: config.md
