@@ -1,81 +1,84 @@
-# 📖 API Reference
+# API
 
-This document provides a comprehensive overview of the public classes, methods, and types available in the **OnBoard** framework.
+## CreateSequence
 
----
+Creates a tutorial sequence.
 
-## 🛠️ OnBoard (Core Engine)
-
-### `CreateSequence`
-
-```luau
-OnBoard.CreateSequence(config: SequenceConfig): Sequence
-Constructs and returns a new `Sequence` controller instance.
-
-* **`config`** (`SequenceConfig`): Configuration table defining sequence ID and steps.
-
-```luau
-local sequence = OnBoard.CreateSequence({
-    Id = "StarterTutorial",
-    Steps = { ... }
-})
+```lua
+local Tutorial = OnBoard.CreateSequence(config)
 ```
 
 ---
 
-## 📋 Step Configuration
+## Step
 
-Each step in a tutorial sequence is defined using a table with the following properties:
+```lua
+{
+    Title = "...",
+    Text = "...",
+    Target = GuiObject,
 
-### `Step` Table Structure
+    ShowArrow = true,
+    ShowOverlay = true
+}
+```
 
-| Property | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `Title` | `string` | **Yes** | Header text displayed in the top banner card. |
-| `Text` | `string` | **Yes** | Detailed instruction or body text. |
-| `Target` | `Instance?` | No | Target UI element (`GuiObject`) or World object (`BasePart`, `Model`, `Attachment`). |
-| `ShowArrow` | `boolean?` | No | Whether to show the pointer arrow or 3D guide beam. *(Defaults to `true`)* |
-| `ShowOverlay` | `boolean?` | No | Whether to dim the screen background with a cutout highlight. *(Defaults to `true`)* |
+| Property | Type | Required |
+|----------|------|----------|
+| Title | string | ✓ |
+| Text | string | ✓ |
+| Target | Instance | |
+| ShowArrow | boolean | |
+| ShowOverlay | boolean | |
 
 ---
 
-## ⚙️ Sequence Controller
+## Sequence
 
-Methods provided by the sequence object returned from `OnBoard.CreateSequence()`.
+### Start
 
-### `Sequence:Start()`
-Starts the tutorial sequence from Step 1.
-
-```luau
-sequence:Start()
+```lua
+Tutorial:Start()
 ```
 
-### `Sequence:Next()`
-Advances the sequence to the next step. If called on the final step, it automatically stops and cleans up the sequence.
+Starts the tutorial.
 
-```luau
-sequence:Next()
+---
+
+### Next
+
+```lua
+Tutorial:Next()
 ```
 
-### `Sequence:Previous()`
-Navigates back to the previous step in the sequence.
+Moves to the next step.
 
-```luau
-sequence:Previous()
+---
+
+### Previous
+
+```lua
+Tutorial:Previous()
 ```
 
-### `Sequence:GoToStep(index: number)`
-Jumps directly to a specific step index.
+Moves to the previous step.
 
-* **`index`** (`number`): The step number to load.
+---
 
-```luau
-sequence:GoToStep(2)
+### GoToStep
+
+```lua
+Tutorial:GoToStep(2)
 ```
 
-### `Sequence:Stop()`
-Immediately halts the sequence, cleans up active UI components, and removes all beams/arrows from the screen.
+Jumps to a step.
 
-```luau
-sequence:Stop()
+---
+
+### Stop
+
+```lua
+Tutorial:Stop()
 ```
+
+Stops the tutorial and cleans everything up.

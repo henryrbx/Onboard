@@ -44,12 +44,10 @@ function VERSION.GetLatestVersion(): string?
 	end
 
 	if placeName ~= "" then
-		-- Extracts version format like "v1.0.0" or "1.0.0" after "Onboard"
 		local rawVersion = string.match(placeName, "Onboard%s+([v%d%.]+)")
 		if rawVersion then
 			VERSION.latestVersion = rawVersion
 		else
-			-- Fallback: capture first word after Onboard if not strict vX.Y.Z format
 			VERSION.latestVersion = string.match(placeName, "Onboard%s+(%S+)")
 		end
 	end

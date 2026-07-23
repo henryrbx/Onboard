@@ -1,25 +1,73 @@
+# OnBoard
+
+Modern onboarding and tutorial framework for Roblox.
+
+Create polished tutorials that guide players through your game using UI highlights, world indicators, overlays, and animated pointers.
+
 ---
-sidebar_position: 1
+
+## Features
+
+✅ UI element highlighting
+
+✅ 3D world indicators
+
+✅ Animated pointer arrows
+
+✅ Darkened overlay with cutout
+
+✅ Step-by-step tutorial sequences
+
+✅ Easy configuration
+
 ---
 
-# OnBoard Framework
+## Installation
 
-**OnBoard** is a modern, lightweight onboarding framework designed for Roblox Luau, enabling quick creation of 2D and 3D tutorial sequences.
+Place the package inside ReplicatedStorage.
 
-The core API is simple and declarative:
+```text
+ReplicatedStorage
+└── OnBoard
+```
+
+Require the module.
 
 ```lua
-local OnBoard = require(ReplicatedStorage.Packages.OnBoard)
+local OnBoard = require(ReplicatedStorage.OnBoard)
+```
 
-local sequence = OnBoard.CreateSequence({
-    Id = "StarterTutorial",
+---
+
+## Quick Start
+
+```lua
+local Tutorial = OnBoard.CreateSequence({
+    Id = "Welcome",
+
     Steps = {
         {
-            Title = "Welcome!",
-            Text = "Let's get started with your first quest.",
-            ShowOverlay = true,
+            Title = "Inventory",
+            Text = "Click here to open your inventory.",
+            Target = InventoryButton
         },
+
+        {
+            Title = "Shop",
+            Text = "Buy your first sword.",
+            Target = ShopButton
+        }
     }
 })
 
-sequence:Start()
+Tutorial:Start()
+```
+
+---
+
+## Documentation
+
+- Configuration
+- API Reference
+
+---
