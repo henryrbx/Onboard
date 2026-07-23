@@ -1,13 +1,5 @@
 a lightweight Roblox framework for creating tutorial sequences with screen overlays, 2D UI arrows, and 3D world guide beams.
 ---
-
-## 📌 Features
-
-* **3D World Beams**: Smoothly points players toward physical parts, models, or attachments in workspace.
-* **2D UI Pointer**: Animated hand pointer that automatically places itself cleanly around UI targets without overlapping.
-* **Smart UI Highlighting**: Cutout overlay and highlight frames for active tutorial steps.
-* **Fully Configurable**: Customizable colors, fonts, banner sizes, and beam textures using `Config.lua`.
-
 ---
 
 ## 🛠️ Installation
