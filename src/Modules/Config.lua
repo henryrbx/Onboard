@@ -22,10 +22,11 @@ local Config: Types.Config = {
 		OverlayTransparency = 0.6,
 
 		-- Highlight (UI)
-		HighlightColor = Color3.fromRGB(0, 162, 255),
+		HighlightColor = Color3.fromRGB(255, 244, 253),
 		HighlightThickness = 3,
 		HighlightCornerRadius = UDim.new(0, 8),
 		HighlightPulseSpeed = 2,
+		HighlightTransparency = 0.3,
 
 		-- Highlight (World)
 		WorldHighlightFillColor = Color3.fromRGB(0, 162, 255),
@@ -41,6 +42,10 @@ local Config: Types.Config = {
 		ArrowWidth0 = 5.5,
 		ArrowWidth1 = 5.5,
 		ArrowTextureSpeed = 1.5,
+		
+		ArrowStrokeColor = Color3.fromRGB(0, 0, 0),
+		ArrowStrokeThickness = 2.5,
+		ArrowStrokeTransparency = 0.2,
 
 		-- Animations
 		TweenSpeed = 0.35,

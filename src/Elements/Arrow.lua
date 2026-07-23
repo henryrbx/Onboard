@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local Modules = script.Parent.Parent.Modules
+local Elements = script.Parent.Parent.Elements
 local Types = require(script.Parent.Parent.Types)
 local Config = require(Modules.Config)
 local Theme = require(Modules.Theme)
@@ -67,37 +68,38 @@ function Arrow:_mountUIArrow()
 	pointer.Size = UDim2.fromOffset(60, 60)
 	pointer.BackgroundTransparency = 1
 	pointer.Text = HAND_EMOJIS.PointDown
-	pointer.TextSize = 48
+	pointer.TextSize = 40
 	pointer.ZIndex = Config.OverlayZIndex + 50
 	pointer.Parent = screenGui
 	self._uiPointer = pointer
 
 	local animationAngle = 0
-
 	self._renderConnection = RunService.RenderStepped:Connect(function(dt)
 		local bounds = Utils.GetTargetScreenBounds(self.Target)
 		if bounds then
 			pointer.Visible = true
 
-			-- Smooth sine wave bounce
 			animationAngle += dt * 5
-			local bounce = math.sin(animationAngle) * 6
-
+			local bounce = (math.sin(animationAngle) + 1) * 4
 			local camera = workspace.CurrentCamera
 			local viewportY = if camera then camera.ViewportSize.Y else 720
 
-			local centerX = bounds.Center.X - 30 -- Center 60px label over target
-
-			-- Check position relative to viewport
+			-- Center X over target UI
+			local centerX = bounds.Center.X
 			if bounds.Center.Y < (viewportY * 0.35) then
-				-- Target is near top -> Float BELOW the target, pointing UP
+				pointer.AnchorPoint = Vector2.new(0.5, 0)
 				pointer.Text = HAND_EMOJIS.PointUp
-				local baseY = bounds.Max.Y + 15 -- Clears the button edge completely
+				local baseY = bounds.Max.Y + 25 
 				pointer.Position = UDim2.fromOffset(centerX, baseY + bounce)
 			else
-				-- Target is lower down -> Float ABOVE the target, pointing DOWN
+				pointer.AnchorPoint = Vector2.new(0.5, 1)
 				pointer.Text = HAND_EMOJIS.PointDown
-				local baseY = bounds.Min.Y - 65 -- 65px clearance so it NEVER touches the button
+
+				-- Lowest point of bounce keeps tip 12px completely clear above button
+				local MIN_GAP_ABOVE_BUTTON = 12 
+				local EMOJI_PADDING_OFFSET = 32 
+
+				local baseY = bounds.Min.Y - (MIN_GAP_ABOVE_BUTTON + EMOJI_PADDING_OFFSET)
 				pointer.Position = UDim2.fromOffset(centerX, baseY - bounce)
 			end
 		else

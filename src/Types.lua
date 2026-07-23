@@ -94,6 +94,7 @@ export type Theme = {
 	HighlightThickness: number,
 	HighlightCornerRadius: UDim,
 	HighlightPulseSpeed: number,
+	HighlightTransparency: number?,
 
 	-- Highlight (World)
 	WorldHighlightFillColor: Color3,
@@ -109,7 +110,6 @@ export type Theme = {
 	ArrowWidth0: number,
 	ArrowWidth1: number,
 	ArrowTextureSpeed: number,
-
 
 	-- Animations
 	TweenSpeed: number,

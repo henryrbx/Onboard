@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 local Modules = script.Parent.Parent.Modules
 local Elements = script.Parent.Parent.Elements
@@ -26,19 +27,18 @@ local function getOrCreateScreenGui(): ScreenGui
 	local screenGui = Instance.new("ScreenGui")
 	screenGui.Name = Config.UIScreenGuiName
 	screenGui.ResetOnSpawn = false
-	screenGui.DisplayOrder = Config.OverlayZIndex + 50 -- Raised DisplayOrder for ScreenGui
+	screenGui.DisplayOrder = Config.OverlayZIndex + 50
 	screenGui.Parent = playerGui
 	return screenGui
 end
 
 export type CardInstance = {
-	SetStep: (self: CardInstance, title: string, text: string, target: Types.Target?, stepIndex: number, totalSteps: number) -> (),
+	SetStep: (self: CardInstance, title: string, text: string | () -> string, target: Types.Target?, stepIndex: number, totalSteps: number) -> (),
 	Destroy: (self: CardInstance) -> ()
 }
 
 function Card.new(customTheme: Types.Theme?): CardInstance
 	local self = setmetatable({}, Card)
-	-- Pull from custom theme, or fallback to Config's global theme
 	local theme = customTheme or (Config and Config.Theme) or {}
 	self._theme = theme
 
@@ -48,12 +48,10 @@ function Card.new(customTheme: Types.Theme?): CardInstance
 	local oldCard = screenGui:FindFirstChild("OnBoard_TopBannerCard")
 	if oldCard then oldCard:Destroy() end
 
-	-- Extract theme settings with safe defaults
 	local titleSize = theme.TitleSize or 22
 	local descSize = theme.DescriptionSize or 16
 	local textColor = theme.TextColor or Color3.fromRGB(255, 255, 255)
 
-	-- Font handling: supports Font objects (Font.fromEnum) or Enum.Font values
 	local fontValue = theme.Font or Enum.Font.BuilderSans
 	local actualFontFace: Font? = if typeof(fontValue) == "Font" then fontValue else nil
 	local actualEnumFont: Enum.Font? = if typeof(fontValue) == "EnumItem" then fontValue else Enum.Font.BuilderSans
@@ -63,7 +61,7 @@ function Card.new(customTheme: Types.Theme?): CardInstance
 	cardFrame.Name = "OnBoard_TopBannerCard"
 	cardFrame.Size = UDim2.fromOffset(480, 90)
 	cardFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-	cardFrame.Position = UDim2.new(0.5, 0, 0.04, 0) -- Top Center
+	cardFrame.Position = UDim2.new(0.5, 0, 0.04, 0)
 	cardFrame.BackgroundColor3 = Color3.fromRGB(15, 20, 25)
 	cardFrame.BackgroundTransparency = 0.2
 	cardFrame.ZIndex = Config.OverlayZIndex + 50
@@ -87,7 +85,6 @@ function Card.new(customTheme: Types.Theme?): CardInstance
 	titleLabel.Position = UDim2.fromOffset(10, 12)
 	titleLabel.BackgroundTransparency = 1
 
-	-- Apply font properly depending on type
 	if actualFontFace then
 		titleLabel.FontFace = actualFontFace
 	else
@@ -121,7 +118,6 @@ function Card.new(customTheme: Types.Theme?): CardInstance
 	textLabel.Position = UDim2.fromOffset(10, 46)
 	textLabel.BackgroundTransparency = 1
 
-	-- Apply font properly depending on type
 	if actualFontFace then
 		textLabel.FontFace = actualFontFace
 	else
@@ -144,16 +140,59 @@ function Card.new(customTheme: Types.Theme?): CardInstance
 	self._cardFrame = cardFrame
 	self._titleLabel = titleLabel
 	self._textLabel = textLabel
+	self._updateConnection = nil -- Heartbeat Connection tracking
 
 	return (self :: any) :: CardInstance
 end
 
-function Card:SetStep(title: string, text: string, target: Types.Target?, stepIndex: number, totalSteps: number)
-	if self._titleLabel then self._titleLabel.Text = title end
-	if self._textLabel then self._textLabel.Text = text end
+function Card:SetStep(title: string, text: string | () -> string, target: Types.Target?, stepIndex: number, totalSteps: number)
+	--print("[OnBoard Debug] SetStep called!")
+	--print("[OnBoard Debug] Title:", title)
+	--print("[OnBoard Debug] Received text type:", typeof(text))
+
+	if self._updateConnection then
+		self._updateConnection:Disconnect()
+		self._updateConnection = nil
+	end
+
+	if self._titleLabel then 
+		self._titleLabel.Text = title 
+	end
+
+	if self._textLabel then 
+		if typeof(text) == "function" then
+			local initialText = text()
+			--print("[OnBoard Debug] Initial function result:", initialText)
+			self._textLabel.Text = initialText
+
+			local lastPrintedText = ""
+			self._updateConnection = RunService.Heartbeat:Connect(function()
+				if self._textLabel and self._textLabel.Parent then
+					local currentText = text()
+					self._textLabel.Text = currentText
+
+					-- Print only when the text actually changes to keep output clean
+					if currentText ~= lastPrintedText then
+						--print("[OnBoard Debug] Heartbeat updated text to ->", currentText)
+						lastPrintedText = currentText
+					end
+				else
+					--print("[OnBoard Debug] TextLabel missing, disconnecting Heartbeat.")
+					self._updateConnection:Disconnect()
+				end
+			end)
+		else
+			--print("[OnBoard Debug] Setting static text:", tostring(text))
+			self._textLabel.Text = tostring(text)
+		end
+	end
 end
 
 function Card:Destroy()
+	if self._updateConnection then
+		self._updateConnection:Disconnect()
+		self._updateConnection = nil
+	end
 	if self._cardFrame then
 		self._cardFrame:Destroy()
 		self._cardFrame = nil

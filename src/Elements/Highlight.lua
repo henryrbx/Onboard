@@ -65,13 +65,16 @@ function Highlight:_mountUIHighlight()
 	highlightFrame.Parent = targetGui
 
 	local uiStroke = Instance.new("UIStroke")
-	uiStroke.Color = Color3.fromRGB(255, 255, 255)
-	uiStroke.Thickness = 4
+	-- Pull stroke properties from theme/config, or fallback to defaults
+	uiStroke.Color = (self._theme and self._theme.HighlightColor) or Config.Theme.HighlightColor or Color3.fromRGB(255, 255, 255)
+	uiStroke.Thickness = (self._theme and self._theme.HighlightThickness) or Config.Theme.HighlightThickness or 4
 	uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	uiStroke.Transparency = (self._theme and self._theme.HighlightTransparency) or Config.Theme.HighlightTransparency or 0.3
 	uiStroke.Parent = highlightFrame
 
 	local uiCorner = Instance.new("UICorner")
-	uiCorner.CornerRadius = UDim.new(0, 12)
+	-- Match target corner radius or use config fallback
+	uiCorner.CornerRadius = (self._theme and self._theme.HighlightCornerRadius) or Config.Theme.HighlightCornerRadius or UDim.new(0, 12)
 	uiCorner.Parent = highlightFrame
 
 	self._uiFrame = highlightFrame
