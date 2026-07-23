@@ -9,9 +9,9 @@ repo_url: https://github.com/henrycooper9/Onboard
 theme:
   name: material
   palette:
-    scheme: slate
-    primary: indigo
-    accent: indigo
+    scheme: slate      # Enables dark background (dark grey/black)
+    primary: grey       # Header bar becomes dark grey/white
+    accent: white       # Highlights & active tab colors become crisp white
 
   features:
     - navigation.instant
