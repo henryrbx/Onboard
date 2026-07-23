@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 
 local Modules = script.Parent.Parent.Modules
 local Elements = script.Parent.Parent.Elements
-local Types = require(Elements.Parent.Types)
+local Types = require(script.Parent.Parent.Types)
 local Config = require(Modules.Config)
 local Theme = require(Modules.Theme)
 
@@ -21,13 +21,13 @@ end
 
 local function getOrCreateScreenGui(): ScreenGui
 	local playerGui = getPlayerGui()
-	local existing = playerGui:FindFirstChild(Config.UIScreenGuiName)
+	local existing = playerGui:FindFirstChild(Config.UI.ScreenGuiName)
 	if existing and existing:IsA("ScreenGui") then return existing end
 
 	local screenGui = Instance.new("ScreenGui")
-	screenGui.Name = Config.UIScreenGuiName
+	screenGui.Name = Config.UI.ScreenGuiName
 	screenGui.ResetOnSpawn = false
-	screenGui.DisplayOrder = Config.OverlayZIndex + 50
+	screenGui.DisplayOrder = Config.UI.OverlayZIndex + 50
 	screenGui.Parent = playerGui
 	return screenGui
 end
@@ -39,7 +39,7 @@ export type CardInstance = {
 
 function Card.new(customTheme: Types.Theme?): CardInstance
 	local self = setmetatable({}, Card)
-	local theme = customTheme or (Config and Config.Theme) or {}
+	local theme = customTheme or Theme.GetGlobal()
 	self._theme = theme
 
 	local screenGui = getOrCreateScreenGui()
@@ -48,11 +48,15 @@ function Card.new(customTheme: Types.Theme?): CardInstance
 	local oldCard = screenGui:FindFirstChild("OnBoard_TopBannerCard")
 	if oldCard then oldCard:Destroy() end
 
-	local titleSize = theme.TitleSize or 22
-	local descSize = theme.DescriptionSize or 16
-	local textColor = theme.TextColor or Color3.fromRGB(255, 255, 255)
+	-- Extract theme values from sub-tables safely
+	local uiTheme = theme.UI or Config.Theme.UI
+	local colorsTheme = theme.Colors or Config.Theme.Colors
 
-	local fontValue = theme.Font or Enum.Font.BuilderSans
+	local titleSize = uiTheme.TitleSize or 22
+	local descSize = uiTheme.DescriptionSize or 16
+	local textColor = colorsTheme.Text or Color3.fromRGB(255, 255, 255)
+
+	local fontValue = uiTheme.Font or Enum.Font.BuilderSans
 	local actualFontFace: Font? = if typeof(fontValue) == "Font" then fontValue else nil
 	local actualEnumFont: Enum.Font? = if typeof(fontValue) == "EnumItem" then fontValue else Enum.Font.BuilderSans
 
@@ -64,7 +68,7 @@ function Card.new(customTheme: Types.Theme?): CardInstance
 	cardFrame.Position = UDim2.new(0.5, 0, 0.04, 0)
 	cardFrame.BackgroundColor3 = Color3.fromRGB(15, 20, 25)
 	cardFrame.BackgroundTransparency = 0.2
-	cardFrame.ZIndex = Config.OverlayZIndex + 50
+	cardFrame.ZIndex = Config.UI.OverlayZIndex + 50
 	cardFrame.Parent = screenGui
 
 	local corner = Instance.new("UICorner")
@@ -95,13 +99,13 @@ function Card.new(customTheme: Types.Theme?): CardInstance
 	titleLabel.TextSize = titleSize
 	titleLabel.TextXAlignment = Enum.TextXAlignment.Center
 	titleLabel.TextYAlignment = Enum.TextYAlignment.Center
-	titleLabel.ZIndex = Config.OverlayZIndex + 51
+	titleLabel.ZIndex = Config.UI.OverlayZIndex + 51
 	titleLabel.Parent = cardFrame
 
 	local titleGradient = Instance.new("UIGradient")
 	titleGradient.Color = ColorSequence.new({
-		ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 220, 255)),
-		ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 240))
+		ColorSequenceKeypoint.new(0, colorsTheme.Primary or Color3.fromRGB(80, 220, 255)),
+		ColorSequenceKeypoint.new(1, colorsTheme.Secondary or Color3.fromRGB(0, 150, 240))
 	})
 	titleGradient.Rotation = 90
 	titleGradient.Parent = titleLabel
@@ -129,7 +133,7 @@ function Card.new(customTheme: Types.Theme?): CardInstance
 	textLabel.TextWrapped = true
 	textLabel.TextXAlignment = Enum.TextXAlignment.Center
 	textLabel.TextYAlignment = Enum.TextYAlignment.Top
-	textLabel.ZIndex = Config.OverlayZIndex + 51
+	textLabel.ZIndex = Config.UI.OverlayZIndex + 51
 	textLabel.Parent = cardFrame
 
 	local textStroke = Instance.new("UIStroke")
@@ -140,16 +144,12 @@ function Card.new(customTheme: Types.Theme?): CardInstance
 	self._cardFrame = cardFrame
 	self._titleLabel = titleLabel
 	self._textLabel = textLabel
-	self._updateConnection = nil -- Heartbeat Connection tracking
+	self._updateConnection = nil
 
 	return (self :: any) :: CardInstance
 end
 
 function Card:SetStep(title: string, text: string | () -> string, target: Types.Target?, stepIndex: number, totalSteps: number)
-	--print("[OnBoard Debug] SetStep called!")
-	--print("[OnBoard Debug] Title:", title)
-	--print("[OnBoard Debug] Received text type:", typeof(text))
-
 	if self._updateConnection then
 		self._updateConnection:Disconnect()
 		self._updateConnection = nil
@@ -162,7 +162,6 @@ function Card:SetStep(title: string, text: string | () -> string, target: Types.
 	if self._textLabel then 
 		if typeof(text) == "function" then
 			local initialText = text()
-			--print("[OnBoard Debug] Initial function result:", initialText)
 			self._textLabel.Text = initialText
 
 			local lastPrintedText = ""
@@ -171,18 +170,14 @@ function Card:SetStep(title: string, text: string | () -> string, target: Types.
 					local currentText = text()
 					self._textLabel.Text = currentText
 
-					-- Print only when the text actually changes to keep output clean
 					if currentText ~= lastPrintedText then
-						--print("[OnBoard Debug] Heartbeat updated text to ->", currentText)
 						lastPrintedText = currentText
 					end
 				else
-					--print("[OnBoard Debug] TextLabel missing, disconnecting Heartbeat.")
 					self._updateConnection:Disconnect()
 				end
 			end)
 		else
-			--print("[OnBoard Debug] Setting static text:", tostring(text))
 			self._textLabel.Text = tostring(text)
 		end
 	end

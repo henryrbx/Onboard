@@ -1,167 +1,122 @@
 --[=[
 	@class Types
-	@ignore
-	
-	Shared type definitions for the OnBoard framework.
+	Central type definitions for OnBoard.
 ]=]
 
---==================================================
--- CORE TYPES
---==================================================
+local Types = {}
 
--- Represents anything in the world or UI that can be targeted by a tutorial step.
-export type Target = 
-	GuiObject 
-| BasePart 
-| Model 
-| Folder 
-| Attachment 
-| PVInstance
-
--- Supports both static strings and reactive functions for dynamic UI updates.
-export type DynamicText = string | () -> string
-
--- Standard event signature for framework signals.
-export type Signal<T... = ...any> = {
-	Connect: (self: Signal<T...>, callback: (T...) -> ()) -> any,
-	Wait: (self: Signal<T...>) -> T...,
-	Fire: (self: Signal<T...>, T...) -> (),
-	DisconnectAll: (self: Signal<T...>) -> (),
-	Destroy: (self: Signal<T...>) -> ()
-}
-
---==================================================
--- TRACKER SYSTEM
---==================================================
-
--- Base interface for all Trackers (Number, Boolean, Zone, Signal, Click, Timer, etc.)
-export type Tracker = {
-	Current: (self: Tracker) -> any,
-	Goal: any,
-	Progress: (self: Tracker) -> number,
-	Completed: Signal<>,
-
-	Start: (self: Tracker) -> (),
-	Stop: (self: Tracker) -> (),
-	Destroy: (self: Tracker) -> ()
-}
-
---==================================================
--- STEP CONFIGURATION
---==================================================
-
-export type StepConfig = {
-	Id: string,
-	Title: DynamicText?,
-	Description: DynamicText?,
-	Target: Target?,
-
-	-- Visual overrides (defaults fallback to Config.lua)
-	Highlight: boolean?,
-	Overlay: boolean?,
-	Arrow: boolean?,
-
-	Tracker: Tracker?
-}
-
--- Internal representation of a Step once processed by the framework
-export type Step = StepConfig & {
-	Index: number,
-	IsActive: boolean
-}
-
---==================================================
--- THEME & CONFIGURATION
---==================================================
-
-export type Theme = {
-	-- Typography
+-- Visual / UI Types
+export type TypographyConfig = {
 	Font: Font,
 	TitleSize: number,
 	DescriptionSize: number,
-
-	-- Colors
-	PrimaryColor: Color3,
-	SecondaryColor: Color3,
-	TextColor: Color3,
-
-	-- Overlay
-	OverlayColor: Color3,
-	OverlayTransparency: number,
-
-	-- Highlight (UI)
-	HighlightColor: Color3,
-	HighlightThickness: number,
-	HighlightCornerRadius: UDim,
-	HighlightPulseSpeed: number,
-	HighlightTransparency: number?,
-
-	-- Highlight (World)
-	WorldHighlightFillColor: Color3,
-	WorldHighlightFillTransparency: number,
-	WorldHighlightOutlineColor: Color3,
-	WorldHighlightOutlineTransparency: number,
-
-	-- Arrow
-	ArrowColor: Color3,
-	ArrowSize: UDim2,
-	ArrowBeamTexture: string,
-	ArrowBeamWidth: number,
-	ArrowWidth0: number,
-	ArrowWidth1: number,
-	ArrowTextureSpeed: number,
-
-	-- Animations
-	TweenSpeed: number,
-	TweenEasingStyle: Enum.EasingStyle,
-	TweenEasingDirection: Enum.EasingDirection
 }
 
-export type Config = {
-	Theme: Theme,
+export type ColorsConfig = {
+	Primary: Color3,
+	Secondary: Color3,
+	Text: Color3,
+}
 
-	-- Default step behaviors
-	DefaultHighlight: boolean,
-	DefaultOverlay: boolean,
-	DefaultArrow: boolean,
+export type OverlayConfig = {
+	Color: Color3,
+	Transparency: number,
+}
 
-	-- Framework settings
-	UseDefaultUI: boolean,
-	UIScreenGuiName: string,
+export type PulseConfig = {
+	Enabled: boolean,
+	Speed: number,
+}
+
+export type HighlightConfig = {
+	Color: Color3,
+	Transparency: number,
+	Thickness: number,
+	CornerRadius: UDim,
+	Pulse: PulseConfig,
+}
+
+export type WorldHighlightConfig = {
+	FillColor: Color3,
+	FillTransparency: number,
+	OutlineColor: Color3,
+	OutlineTransparency: number,
+}
+
+export type StrokeConfig = {
+	Color: Color3,
+	Thickness: number,
+	Transparency: number,
+}
+
+export type BeamConfig = {
+	Texture: string,
+	Width: number,
+	Width0: number,
+	Width1: number,
+	TextureSpeed: number,
+}
+
+export type ArrowConfig = {
+	Color: Color3,
+	Size: UDim2,
+	Stroke: StrokeConfig,
+	Beam: BeamConfig,
+}
+
+export type AnimationConfig = {
+	Duration: number,
+	Style: Enum.EasingStyle,
+	Direction: Enum.EasingDirection,
+}
+
+-- Theme Table Type
+export type ThemeConfig = {
+	UI: TypographyConfig,
+	Colors: ColorsConfig,
+	Overlay: OverlayConfig,
+	Highlight: HighlightConfig,
+	WorldHighlight: WorldHighlightConfig,
+	Arrow: ArrowConfig,
+	Animation: AnimationConfig,
+}
+
+-- Defaults & Framework Settings Types
+export type StepDefaultsConfig = {
+	Highlight: boolean,
+	Overlay: boolean,
+	Arrow: boolean,
+	Focus: boolean,
+}
+
+export type UIConfig = {
+	Enabled: boolean,
+	ScreenGuiName: string,
 	OverlayZIndex: number,
-	CoreUIZIndex: number
+	CoreZIndex: number,
 }
 
---==================================================
--- PUBLIC API INTERFACE
---==================================================
-
-export type Tutorial = {
-	-- Methods
-	AddStep: (self: Tutorial, config: StepConfig) -> (),
-	Start: (self: Tutorial) -> (),
-	Pause: (self: Tutorial) -> (),
-	Resume: (self: Tutorial) -> (),
-	Next: (self: Tutorial) -> (),
-	Previous: (self: Tutorial) -> (),
-	Skip: (self: Tutorial) -> (),
-	Stop: (self: Tutorial) -> (),
-	Reset: (self: Tutorial) -> (),
-	Destroy: (self: Tutorial) -> (),
-
-	-- State
-	IsPlaying: boolean,
-	IsPaused: boolean,
-	CurrentStepIndex: number,
-
-	-- Events
-	Started: Signal<>,
-	Paused: Signal<>,
-	Resumed: Signal<>,
-	StepChanged: Signal<Step>,
-	StepCompleted: Signal<Step>,
-	Completed: Signal<>,
-	Cancelled: Signal<>
+export type DataStoreConfig = {
+	Enabled: boolean,
+	TutorialId: string,
+	SaveOnStepChange: boolean,
 }
 
-return {}
+-- Main Master Config Type
+export type Config = {
+	Theme: ThemeConfig,
+	Defaults: StepDefaultsConfig,
+	UI: UIConfig,
+	DataStore: DataStoreConfig,
+}
+
+-- Core Instance Types
+export type Target = GuiObject | BasePart | Model
+
+export type Signal<T...> = {
+	Connect: (self: Signal<T...>, callback: (T...) -> ()) -> RBXScriptConnection,
+	Fire: (self: Signal<T...>, T...) -> (),
+	DisconnectAll: (self: Signal<T...>) -> (),
+}
+
+return Types

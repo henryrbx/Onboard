@@ -1,4 +1,3 @@
---!strict
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
@@ -96,7 +95,7 @@ end
 --[=[
 	Tracks a numeric getter until it reaches a goal value.
 ]=]
-function Tracker.Number(getValue: () -> number, goal: number): Types.Tracker
+function Tracker.Number(getValue: () -> number, goal: number): any
 	local base, _, trigger = createBaseTracker(
 		goal,
 		getValue,
@@ -135,7 +134,7 @@ end
 --[=[
 	Tracks a boolean predicate function until it returns true.
 ]=]
-function Tracker.Boolean(predicate: () -> boolean): Types.Tracker
+function Tracker.Boolean(predicate: () -> boolean): any
 	local base, _, trigger = createBaseTracker(
 		true,
 		predicate,
@@ -173,7 +172,7 @@ end
 --[=[
 	Tracks an event signal until it fires (with optional predicate filter).
 ]=]
-function Tracker.Signal(signal: any, predicate: ((...any) -> boolean)?): Types.Tracker
+function Tracker.Signal(signal: any, predicate: ((...any) -> boolean)?): any
 	local isFired = false
 
 	local base, _, trigger = createBaseTracker(
@@ -217,7 +216,7 @@ end
 --[=[
 	Tracks player proximity within a given radius of a 3D position or BasePart.
 ]=]
-function Tracker.Zone(targetPositionOrPart: Vector3 | BasePart, radius: number): Types.Tracker
+function Tracker.Zone(targetPositionOrPart: Vector3 | BasePart, radius: number): any
 	local function getTargetPos(): Vector3
 		if typeof(targetPositionOrPart) == "Vector3" then
 			return targetPositionOrPart
@@ -276,7 +275,7 @@ end
 --[=[
 	Tracks a user click/activation on a GuiButton or 3D ClickDetector.
 ]=]
-function Tracker.Click(targetInstance: GuiButton | ClickDetector): Types.Tracker
+function Tracker.Click(targetInstance: GuiButton | ClickDetector): any
 	local isClicked = false
 
 	local base, _, trigger = createBaseTracker(
@@ -323,7 +322,7 @@ end
 --[=[
 	Tracks a countdown timer duration in seconds.
 ]=]
-function Tracker.Timer(durationSeconds: number): Types.Tracker
+function Tracker.Timer(durationSeconds: number): any
 	local elapsedTime = 0
 
 	local base, _, trigger = createBaseTracker(

@@ -22,13 +22,13 @@ end
 
 local function getOrCreateScreenGui(): ScreenGui
 	local playerGui = getPlayerGui()
-	local existing = playerGui:FindFirstChild(Config.UIScreenGuiName)
+	local existing = playerGui:FindFirstChild(Config.UI.ScreenGuiName)
 	if existing and existing:IsA("ScreenGui") then return existing end
 
 	local screenGui = Instance.new("ScreenGui")
-	screenGui.Name = Config.UIScreenGuiName
+	screenGui.Name = Config.UI.ScreenGuiName
 	screenGui.ResetOnSpawn = false
-	screenGui.DisplayOrder = Config.OverlayZIndex
+	screenGui.DisplayOrder = Config.UI.OverlayZIndex
 	screenGui.Parent = playerGui
 	return screenGui
 end
@@ -43,7 +43,7 @@ function Overlay.new(targetOrTheme: any?, customTheme: Types.Theme?): OverlayIns
 
 	-- Handle argument ambiguity if Tutorial passes (target, theme) or just (theme)
 	local resolvedTheme: Types.Theme
-	if type(targetOrTheme) == "table" and targetOrTheme.OverlayColor ~= nil then
+	if type(targetOrTheme) == "table" and (targetOrTheme.Overlay or targetOrTheme.OverlayColor) ~= nil then
 		resolvedTheme = targetOrTheme
 	elseif customTheme then
 		resolvedTheme = customTheme
@@ -57,12 +57,17 @@ function Overlay.new(targetOrTheme: any?, customTheme: Types.Theme?): OverlayIns
 
 	local screenGui = getOrCreateScreenGui()
 
+	-- Extract theme values from nested sub-table with safe fallback to Config
+	local overlayTheme = self._theme.Overlay or Config.Theme.Overlay
+	local overlayColor = overlayTheme.Color or Color3.fromRGB(0, 0, 0)
+	local overlayTransparency = overlayTheme.Transparency or 0.5
+
 	local overlayFrame = Instance.new("Frame")
 	overlayFrame.Name = "OnBoard_DimOverlay"
 	overlayFrame.Size = UDim2.fromScale(1, 1)
-	overlayFrame.BackgroundColor3 = self._theme.OverlayColor
-	overlayFrame.BackgroundTransparency = self._theme.OverlayTransparency
-	overlayFrame.ZIndex = Config.OverlayZIndex
+	overlayFrame.BackgroundColor3 = overlayColor
+	overlayFrame.BackgroundTransparency = overlayTransparency
+	overlayFrame.ZIndex = Config.UI.OverlayZIndex
 	overlayFrame.Parent = screenGui
 
 	self._overlayFrame = overlayFrame

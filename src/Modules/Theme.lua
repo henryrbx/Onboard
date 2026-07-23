@@ -17,7 +17,7 @@ export type CustomTheme = {
 }
 
 export type PartialTheme = {
-	Font: Font?,
+	Font: (Font | Enum.Font)?,
 	TitleSize: number?,
 	DescriptionSize: number?,
 	PrimaryColor: Color3?,
@@ -39,7 +39,46 @@ export type PartialTheme = {
 	ArrowBeamWidth: number?,
 	TweenSpeed: number?,
 	TweenEasingStyle: Enum.EasingStyle?,
-	TweenEasingDirection: Enum.EasingDirection?
+	TweenEasingDirection: Enum.EasingDirection?,
+
+	-- Support nested sub-tables directly
+	UI: {
+		Font: (Font | Enum.Font)?,
+		TitleSize: number?,
+		DescriptionSize: number?,
+	}?,
+	Colors: {
+		Primary: Color3?,
+		Secondary: Color3?,
+		Text: Color3?,
+	}?,
+	Overlay: {
+		Color: Color3?,
+		Transparency: number?,
+	}?,
+	Highlight: {
+		Color: Color3?,
+		Thickness: number?,
+		CornerRadius: UDim?,
+		PulseSpeed: number?,
+	}?,
+	WorldHighlight: {
+		FillColor: Color3?,
+		FillTransparency: number?,
+		OutlineColor: Color3?,
+		OutlineTransparency: number?,
+	}?,
+	Arrow: {
+		Color: Color3?,
+		Size: UDim2?,
+		BeamTexture: string?,
+		BeamWidth: number?,
+	}?,
+	Tween: {
+		Speed: number?,
+		EasingStyle: Enum.EasingStyle?,
+		EasingDirection: Enum.EasingDirection?,
+	}?
 }
 
 -- Typed generic signal constructor compatible with Luau strict mode
@@ -103,6 +142,49 @@ local function deepCopyTable<T>(target: T): T
 	return copy :: any
 end
 
+-- Merges legacy flat key-value pairs or sub-tables safely into the target theme object
+local function applyOverrides(targetTheme: any, overrides: PartialTheme)
+	for key, value in pairs(overrides) do
+		if value == nil then continue end
+
+		-- 1. Handle direct sub-table assignment (e.g. overrides.Colors = { Primary = ... })
+		if type(value) == "table" and targetTheme[key] ~= nil and type(targetTheme[key]) == "table" then
+			for subKey, subValue in pairs(value) do
+				targetTheme[key][subKey] = subValue
+			end
+			continue
+		end
+
+		-- 2. Map legacy flat property keys to their corresponding nested paths
+		if key == "Font" and targetTheme.UI then targetTheme.UI.Font = value
+		elseif key == "TitleSize" and targetTheme.UI then targetTheme.UI.TitleSize = value
+		elseif key == "DescriptionSize" and targetTheme.UI then targetTheme.UI.DescriptionSize = value
+		elseif key == "PrimaryColor" and targetTheme.Colors then targetTheme.Colors.Primary = value
+		elseif key == "SecondaryColor" and targetTheme.Colors then targetTheme.Colors.Secondary = value
+		elseif key == "TextColor" and targetTheme.Colors then targetTheme.Colors.Text = value
+		elseif key == "OverlayColor" and targetTheme.Overlay then targetTheme.Overlay.Color = value
+		elseif key == "OverlayTransparency" and targetTheme.Overlay then targetTheme.Overlay.Transparency = value
+		elseif key == "HighlightColor" and targetTheme.Highlight then targetTheme.Highlight.Color = value
+		elseif key == "HighlightThickness" and targetTheme.Highlight then targetTheme.Highlight.Thickness = value
+		elseif key == "HighlightCornerRadius" and targetTheme.Highlight then targetTheme.Highlight.CornerRadius = value
+		elseif key == "HighlightPulseSpeed" and targetTheme.Highlight then targetTheme.Highlight.PulseSpeed = value
+		elseif key == "WorldHighlightFillColor" and targetTheme.WorldHighlight then targetTheme.WorldHighlight.FillColor = value
+		elseif key == "WorldHighlightFillTransparency" and targetTheme.WorldHighlight then targetTheme.WorldHighlight.FillTransparency = value
+		elseif key == "WorldHighlightOutlineColor" and targetTheme.WorldHighlight then targetTheme.WorldHighlight.OutlineColor = value
+		elseif key == "WorldHighlightOutlineTransparency" and targetTheme.WorldHighlight then targetTheme.WorldHighlight.OutlineTransparency = value
+		elseif key == "ArrowColor" and targetTheme.Arrow then targetTheme.Arrow.Color = value
+		elseif key == "ArrowSize" and targetTheme.Arrow then targetTheme.Arrow.Size = value
+		elseif key == "ArrowBeamTexture" and targetTheme.Arrow then targetTheme.Arrow.BeamTexture = value
+		elseif key == "ArrowBeamWidth" and targetTheme.Arrow then targetTheme.Arrow.BeamWidth = value
+		elseif key == "TweenSpeed" and targetTheme.Tween then targetTheme.Tween.Speed = value
+		elseif key == "TweenEasingStyle" and targetTheme.Tween then targetTheme.Tween.EasingStyle = value
+		elseif key == "TweenEasingDirection" and targetTheme.Tween then targetTheme.Tween.EasingDirection = value
+		elseif targetTheme[key] ~= nil then
+			targetTheme[key] = value
+		end
+	end
+end
+
 -- Default global active theme state initialized from Config
 local globalTheme: Types.Theme = deepCopyTable(Config.Theme)
 local globalChangedSignal = createSignal()
@@ -118,11 +200,7 @@ end
 	Updates global theme properties and fires the global theme update signal.
 ]=]
 function Theme.SetGlobal(overrides: PartialTheme): ()
-	for key, value in pairs(overrides) do
-		if (globalTheme :: any)[key] ~= nil then
-			(globalTheme :: any)[key] = value
-		end
-	end
+	applyOverrides(globalTheme, overrides)
 	globalChangedSignal:Fire(globalTheme)
 end
 
@@ -138,11 +216,7 @@ function Theme.new(overrides: PartialTheme?): CustomTheme
 	local themeInstance: Types.Theme = deepCopyTable(globalTheme)
 
 	if overrides then
-		for key, value in pairs(overrides) do
-			if (themeInstance :: any)[key] ~= nil then
-				(themeInstance :: any)[key] = value
-			end
-		end
+		applyOverrides(themeInstance, overrides)
 	end
 
 	local changedSignal = createSignal()
@@ -151,11 +225,7 @@ function Theme.new(overrides: PartialTheme?): CustomTheme
 		Current = themeInstance,
 		Changed = changedSignal,
 		Update = function(customSelf, newOverrides: PartialTheme)
-			for key, value in pairs(newOverrides) do
-				if (customSelf.Current :: any)[key] ~= nil then
-					(customSelf.Current :: any)[key] = value
-				end
-			end
+			applyOverrides(customSelf.Current, newOverrides)
 			customSelf.Changed:Fire(customSelf.Current)
 		end,
 		Destroy = function(customSelf)

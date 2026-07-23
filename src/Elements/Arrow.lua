@@ -29,13 +29,13 @@ end
 
 local function getOrCreateScreenGui(): ScreenGui
 	local playerGui = getPlayerGui()
-	local existing = playerGui:FindFirstChild(Config.UIScreenGuiName)
+	local existing = playerGui:FindFirstChild(Config.UI.ScreenGuiName)
 	if existing and existing:IsA("ScreenGui") then return existing end
 
 	local screenGui = Instance.new("ScreenGui")
-	screenGui.Name = Config.UIScreenGuiName
+	screenGui.Name = Config.UI.ScreenGuiName
 	screenGui.ResetOnSpawn = false
-	screenGui.DisplayOrder = Config.OverlayZIndex + 10
+	screenGui.DisplayOrder = Config.UI.OverlayZIndex + 10
 	screenGui.Parent = playerGui
 	return screenGui
 end
@@ -63,13 +63,15 @@ end
 
 function Arrow:_mountUIArrow()
 	local screenGui = getOrCreateScreenGui()
+	local arrowTheme = (self._theme and self._theme.Arrow) or Config.Theme.Arrow
+
 	local pointer = Instance.new("TextLabel")
 	pointer.Name = "OnBoard_UIPointer"
-	pointer.Size = UDim2.fromOffset(60, 60)
+	pointer.Size = arrowTheme.Size or UDim2.fromOffset(40, 40)
 	pointer.BackgroundTransparency = 1
 	pointer.Text = HAND_EMOJIS.PointDown
 	pointer.TextSize = 40
-	pointer.ZIndex = Config.OverlayZIndex + 50
+	pointer.ZIndex = Config.UI.OverlayZIndex + 50
 	pointer.Parent = screenGui
 	self._uiPointer = pointer
 
@@ -126,7 +128,6 @@ function Arrow:_mountWorldArrow()
 
 	local att0 = Instance.new("Attachment")
 	att0.Name = "OnBoard_BeamAtt0"
-	--att0.Position = Vector3.new(0, -2.5, 0)
 	att0.Position = Vector3.new(0, 0, 0)
 	att0.Parent = root
 
@@ -147,6 +148,9 @@ function Arrow:_mountWorldArrow()
 		return
 	end
 
+	local arrowTheme = (self._theme and self._theme.Arrow) or Config.Theme.Arrow
+	local beamConfig = arrowTheme.Beam
+
 	local beam = Instance.new("Beam")
 	beam.Name = "OnBoard_GuideBeam"
 
@@ -154,16 +158,15 @@ function Arrow:_mountWorldArrow()
 	beam.Attachment0 = att1
 	beam.Attachment1 = att0
 
-	beam.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
-	beam.Width0 = Config.Theme.ArrowWidth0
-	beam.Width1 = Config.Theme.ArrowWidth1
-	beam.Texture = Config.Theme and Config.Theme.ArrowBeamTexture or "rbxassetid://7072706663"
+	beam.Color = ColorSequence.new(arrowTheme.Color or Color3.fromRGB(0, 162, 255))
+	beam.Width0 = beamConfig.Width0 or 5.5
+	beam.Width1 = beamConfig.Width1 or 5.5
+	beam.Texture = beamConfig.Texture or "rbxassetid://98078426234204"
 	beam.TextureMode = Enum.TextureMode.Wrap
 	beam.TextureLength = 4
 	beam.FaceCamera = true
-
-	-- POSITIVE SPEED: Scrolls the arrows outward from player to target
-	beam.TextureSpeed = Config.Theme.ArrowTextureSpeed
+	
+	beam.TextureSpeed = beamConfig.TextureSpeed or 1.5
 	beam.Parent = att0
 
 	self._beamAttachment0 = att0

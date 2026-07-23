@@ -22,13 +22,13 @@ end
 
 local function getOrCreateScreenGui(): ScreenGui
 	local playerGui = getPlayerGui()
-	local existing = playerGui:FindFirstChild(Config.UIScreenGuiName)
+	local existing = playerGui:FindFirstChild(Config.UI.ScreenGuiName)
 	if existing and existing:IsA("ScreenGui") then return existing end
 
 	local screenGui = Instance.new("ScreenGui")
-	screenGui.Name = Config.UIScreenGuiName
+	screenGui.Name = Config.UI.ScreenGuiName
 	screenGui.ResetOnSpawn = false
-	screenGui.DisplayOrder = Config.OverlayZIndex + 2
+	screenGui.DisplayOrder = Config.UI.OverlayZIndex + 2
 	screenGui.Parent = playerGui
 	return screenGui
 end
@@ -61,31 +61,50 @@ function Highlight:_mountUIHighlight()
 	highlightFrame.BackgroundTransparency = 1
 	highlightFrame.Size = UDim2.fromScale(1, 1)
 	highlightFrame.Position = UDim2.fromScale(0, 0)
-	highlightFrame.ZIndex = Config.OverlayZIndex + 3
+	highlightFrame.ZIndex = Config.UI.OverlayZIndex + 3
 	highlightFrame.Parent = targetGui
 
+	-- Pull stroke properties from nested Theme/Config structure
+	local highlightTheme = (self._theme and self._theme.Highlight) or Config.Theme.Highlight
+
 	local uiStroke = Instance.new("UIStroke")
-	-- Pull stroke properties from theme/config, or fallback to defaults
-	uiStroke.Color = (self._theme and self._theme.HighlightColor) or Config.Theme.HighlightColor or Color3.fromRGB(255, 255, 255)
-	uiStroke.Thickness = (self._theme and self._theme.HighlightThickness) or Config.Theme.HighlightThickness or 4
+	uiStroke.Color = highlightTheme.Color or Color3.fromRGB(255, 255, 255)
+	uiStroke.Thickness = highlightTheme.Thickness or 4
 	uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	uiStroke.Transparency = (self._theme and self._theme.HighlightTransparency) or Config.Theme.HighlightTransparency or 0.3
+	uiStroke.Transparency = highlightTheme.Transparency or 0.3
 	uiStroke.Parent = highlightFrame
 
 	local uiCorner = Instance.new("UICorner")
-	-- Match target corner radius or use config fallback
-	uiCorner.CornerRadius = (self._theme and self._theme.HighlightCornerRadius) or Config.Theme.HighlightCornerRadius or UDim.new(0, 12)
+	uiCorner.CornerRadius = highlightTheme.CornerRadius or UDim.new(0, 12)
 	uiCorner.Parent = highlightFrame
+
+	-- Optional: Handle pulse animation if enabled in nested config
+	if highlightTheme.Pulse and highlightTheme.Pulse.Enabled then
+		local pulseTweenInfo = TweenInfo.new(
+			1 / highlightTheme.Pulse.Speed,
+			Enum.EasingStyle.Sine,
+			Enum.EasingDirection.InOut,
+			-1,
+			true
+		)
+		self._pulseTween = TweenService:Create(uiStroke, pulseTweenInfo, {
+			Transparency = math.clamp(uiStroke.Transparency - 0.2, 0, 1)
+		})
+		self._pulseTween:Play()
+	end
 
 	self._uiFrame = highlightFrame
 end
 
 function Highlight:_mountWorldHighlight()
+	local worldTheme = (self._theme and self._theme.WorldHighlight) or Config.Theme.WorldHighlight
+
 	local worldHighlight = Instance.new("Highlight")
 	worldHighlight.Name = "OnBoard_WorldHighlight"
-	worldHighlight.FillTransparency = 1
-	worldHighlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-	worldHighlight.OutlineTransparency = 0
+	worldHighlight.FillColor = worldTheme.FillColor or Color3.fromRGB(0, 162, 255)
+	worldHighlight.FillTransparency = worldTheme.FillTransparency or 0.5
+	worldHighlight.OutlineColor = worldTheme.OutlineColor or Color3.fromRGB(255, 255, 255)
+	worldHighlight.OutlineTransparency = worldTheme.OutlineTransparency or 0
 	worldHighlight.Adornee = self.Target :: Instance
 	worldHighlight.Parent = self.Target :: Instance
 
@@ -93,6 +112,10 @@ function Highlight:_mountWorldHighlight()
 end
 
 function Highlight:Destroy()
+	if self._pulseTween then
+		self._pulseTween:Cancel()
+		self._pulseTween = nil
+	end
 	if self._uiFrame then
 		self._uiFrame:Destroy()
 		self._uiFrame = nil
